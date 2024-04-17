@@ -15,7 +15,7 @@ import {useAuth} from "@/contexts/auth.context.jsx";
 
 export const Login = () => {
     return (
-        <div className="flex justify-center items-center h-screen bg-gray-100">
+        <div className="flex justify-center items-center h-screen bg-accent-100">
             <LoginForm />
         </div>
     )

@@ -16,8 +16,8 @@ export const   Header = () => {
     const {user, logout} = useAuth();
     const navigate = useNavigate();
 
-    const handleLogout = async () => {
-        await logout();
+    const handleLogout = () => {
+        logout();
         navigate('/login');
         toast.success('Logged out successfully');
     }
@@ -25,12 +25,10 @@ export const   Header = () => {
         <header className="px-4 py-4 border-b w-full shrink-0 md:px-6">
             <div className="container w-full flex items-center justify-between">
                 <Link className="flex mr-4" to="/">
-                    <MountainIcon className="h-6 w-6" />
-                    <span className="sr-only">Acme Inc</span>
+                    <span>FitApp</span>
                 </Link>
                 <nav className="text-sm font-medium">
                     {user ?
-
                         <DropdownMenu>
                             <DropdownMenuTrigger>
                                 <Avatar>

@@ -13,19 +13,28 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 
-export default function Component() {
-    return (
-        <Card>
-            <CardHeader className="pb-2">
-                <CardDescription>This Week</CardDescription>
-                <CardTitle className="text-4xl">$1,329</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <div className="text-xs text-muted-foreground">+25% from last week</div>
-            </CardContent>
-        </Card>
-    )
-}
+export const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+        return (
+            <div className="custom-tooltip">
+                <p className="label">{`${label} : ${payload[0].value}`}</p>
+            </div>
+        );
+    }
+    return null;
+};
+
+export const CustomFeelingTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+        return (
+            <div className="custom-tooltip">
+                <p className="label">{`${label} : ${payload[0].value}`}</p>
+            </div>
+        );
+    }
+
+    return null;
+};
 
 
 export const Patient = () => {
@@ -33,10 +42,29 @@ export const Patient = () => {
     const {id} = useParams();
 
     const [patient, setPatient] = useState({});
+    const [psychicData, setPsychicData] = useState([])
 
     const {logout} = useAuth();
 
     useEffect(() => {
+        const fetchPsychoData = async () => {
+            const response = await fetch('https://health.shrp.dev/items/psychicData/', {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('user')}`
+                }
+            });
+            if(!response.ok) {
+                if(response.status === 401) {
+                    toast.error('Your session has expired');
+                    logout();
+                }
+                return;
+            }
+            const data = await response.json();
+            const filteredData = data.data.filter((value) => value.people_id === id);
+            setPsychicData(filteredData);
+        }
+        fetchPsychoData();
         const fetchPatient = async () => {
             const response = await fetch(`https://health.shrp.dev/items/people/${id}`, {
                 headers: {
@@ -56,8 +84,9 @@ export const Patient = () => {
         fetchPatient();
     }, []);
 
-    const psychoData = patient?.physiologicalData?.map((value, index) => ({ id: index.toString(), value }));
-    const activityData = patient?.physicalActivities?.map((value, index) => ({ id: index.toString(), value }));
+    const psychoDatum = patient?.physiologicalData?.map((value, index) => ({ id: index.toString(), value }));
+    const activityDatum = patient?.physicalActivities?.map((value, index) => ({ id: index.toString(), value }));
+    const psychicDatum = psychicData?.map((value, index) => ({ id: value.date, value: value.feeling }));
 
     return (
         <main className="container mt-12">
@@ -101,26 +130,43 @@ export const Patient = () => {
                 <div className="mt-8 w-full">
                     <h2 className="text-xl font-bold mb-4">Psychologic Data</h2>
                     <ResponsiveContainer width="100%" height={500}>
-                        <LineChart data={psychoData}>
+                        <LineChart data={psychoDatum}>
                             <Line type="monotone" dataKey="value" stroke="#8884d8"/>
                             <XAxis dataKey="id"/>
                             <YAxis/>
-                            <Tooltip/>
+                            <Tooltip content={<CustomTooltip/>} cursor={{fill: "transparent"}}/>
                         </LineChart>
                     </ResponsiveContainer>
                 </div>
                 <div className="mt-8 w-full">
                     <h2 className="text-xl font-bold mb-4">Physical Activities</h2>
                     <ResponsiveContainer width="100%" height={500}>
-                        <LineChart data={activityData}>
+                        <LineChart data={activityDatum}>
                             <Line type="monotone" dataKey="value" stroke="#8884d8"/>
                             <XAxis dataKey="id"/>
                             <YAxis/>
-                            <Tooltip/>
+                            <Tooltip content={<CustomTooltip/>} cursor={{fill: "transparent"}}/>
                         </LineChart>
                     </ResponsiveContainer>
                 </div>
+
             </div>
+            {psychicDatum.length > 0 ?
+                <div className="mt-8 w-full">
+                    <h2 className="text-xl font-bold mb-4">Feelings</h2>
+                    <ResponsiveContainer width="100%" height={500}>
+                        <LineChart data={psychicDatum}>
+                            <Line type="monotone" dataKey="value" stroke="#8884d8"/>
+                            <XAxis dataKey="id"/>
+                            <Tooltip content={<CustomFeelingTooltip/>} cursor={{fill: "transparent"}}/>
+                            <CartesianGrid strokeDasharray="3 3"/>
+                        </LineChart>
+                    </ResponsiveContainer>
+                </div> : <div className="mt-8 w-full">
+                    <h2 className="text-xl font-bold mb-4">Feeling</h2>
+                    <p className="text-gray-500">No data available</p>
+                </div>
+            }
         </main>
     )
 }

@@ -25,7 +25,7 @@ export const   Header = () => {
         <header className="px-4 py-4 border-b w-full shrink-0 md:px-6">
             <div className="container w-full flex items-center justify-between">
                 <Link className="flex mr-4" to="/">
-                    <span>FitApp</span>
+                    <img src="/logo_fitapp.png" alt="FitApp" className="size-12 w-auto" />
                 </Link>
                 <nav className="text-sm font-medium">
                     {user ?

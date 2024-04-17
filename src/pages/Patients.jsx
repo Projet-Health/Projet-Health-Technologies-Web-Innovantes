@@ -36,9 +36,10 @@ export const Patients = () => {
                 <p className="text-gray-500">Here you can retrieve all the patients.</p>
             </div>
             <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {patients?.map((patient) => (
-                    <li key={patient.id}>
-                    <Link to={`/patient/${patient.id}`} className="bg-muted p-4 rounded-lg shadow flex transition gap-4 hover:bg-muted-foreground">
+                {patients?.map((patient) => {
+                    if(patient.height !== null)
+                    return <li key={patient.id}>
+                        <Link to={`/patient/${patient.id}`} className="bg-muted hover:-translate-y-1 p-4 rounded-lg shadow flex transition gap-4 hover:bg-muted-foreground">
                             <img className="size-8 object-cover rounded-sm" src={patient?.sex === 1 ? "https://www.toutelasignaletique.com/21032-thickbox_default/plaque-porte-picto-alu-decoupe-symbole-homme-5-couleurs-au-choix.jpg" : "https://www.toutelasignaletique.com/21028-large_default/plaque-porte-picto-alu-decoupe-symbole-femme-5-coloris-au-choix.jpg"} />
                             <div>
                                 <h2 className="text-xl font-bold">{patient.firstname} {patient.lastname}</h2>
@@ -46,7 +47,7 @@ export const Patients = () => {
                             </div>
                         </Link>
                     </li>
-                ))}
+                })}
             </ul>
         </main>
     )

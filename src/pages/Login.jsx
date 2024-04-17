@@ -46,7 +46,7 @@ export function LoginForm() {
                 navigate('/');
                 login(data.data.access_token);
             } else {
-                toast.error(data.message);
+                toast.error(data.errors[0].message);
             }
         }
     }

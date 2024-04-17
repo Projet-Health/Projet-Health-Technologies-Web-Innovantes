@@ -14,7 +14,7 @@ import {useNavigate} from "react-router-dom";
 
 export const Signup = () => {
     return (
-        <div className="flex justify-center items-center h-screen bg-gray-100">
+        <div className="flex justify-center items-center h-screen bg-accent-100">
             <SignupForm />
         </div>
     )
